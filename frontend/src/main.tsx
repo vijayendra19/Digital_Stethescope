@@ -10,10 +10,10 @@ if ('serviceWorker' in navigator) {
   registerSW({
     immediate: true,
     onNeedRefresh() {
-      console.log('New Smart Stethoscope AI version available.');
+      console.log('New Smart Stethoscope version available.');
     },
     onOfflineReady() {
-      console.log('Smart Stethoscope AI is ready for offline use.');
+      console.log('Smart Stethoscope is ready for offline use.');
     },
   });
 }

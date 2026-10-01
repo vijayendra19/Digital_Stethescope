@@ -43,7 +43,7 @@ export const LoginPage: React.FC = () => {
             <Activity className="w-7 h-7 text-white animate-pulse-subtle" />
           </div>
           <h1 className="text-2xl font-extrabold text-blue-950 tracking-tight">Clinician Portal</h1>
-          <p className="text-sm text-slate-500 mt-1">Sign in to access AI steth screening & patient records</p>
+          <p className="text-sm text-slate-500 mt-1">Sign in to access digital stethoscope screening & patient records</p>
         </div>
 
         {/* Error Alert */}

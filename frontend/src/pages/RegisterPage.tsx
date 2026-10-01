@@ -40,7 +40,7 @@ export const RegisterPage: React.FC = () => {
             <Activity className="w-7 h-7 text-white animate-pulse-subtle" />
           </div>
           <h1 className="text-2xl font-extrabold text-blue-950 tracking-tight">Create Account</h1>
-          <p className="text-sm text-slate-500 mt-1">Register for AI Stethoscope Screening</p>
+          <p className="text-sm text-slate-500 mt-1">Register for Digital Stethoscope Screening</p>
         </div>
 
         {/* Error Alert */}

@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icons/*.png', 'icons/*.svg'],
       manifest: {
-        name: 'Smart Stethoscope AI',
-        short_name: 'Steth AI',
-        description: 'AI-assisted Heart & Lung Sound Screening with Grad-CAM explainability',
+        name: 'Smart Stethoscope Screening',
+        short_name: 'SmartSteth',
+        description: 'Digital Heart & Lung Sound Screening with Grad-CAM explainability',
         theme_color: '#0f172a',
         background_color: '#0f172a',
         display: 'standalone',

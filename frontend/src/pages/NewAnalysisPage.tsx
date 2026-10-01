@@ -189,7 +189,7 @@ export const NewAnalysisPage: React.FC = () => {
         },
       });
     } catch (err: any) {
-      const msg = err.response?.data?.detail || 'AI screening failed. Please check your audio file.';
+      const msg = err.response?.data?.detail || 'Screening failed. Please check your audio file.';
       setError(msg);
       setLoadingStep(null);
     }
@@ -551,7 +551,7 @@ export const NewAnalysisPage: React.FC = () => {
           ) : (
             <>
               <Activity className="w-5 h-5" />
-              <span>Run AI Stethoscope Diagnosis</span>
+              <span>Run Stethoscope Diagnosis</span>
               <ArrowRight className="w-5 h-5" />
             </>
           )}

@@ -28,7 +28,7 @@ export function usePWAInstall() {
       setIsInstalled(true);
       setIsInstallable(false);
       setDeferredPrompt(null);
-      console.log('Smart Stethoscope AI PWA was installed.');
+      console.log('Smart Stethoscope application was installed.');
     });
 
     return () => {

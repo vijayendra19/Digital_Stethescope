@@ -92,7 +92,7 @@ export const HistoryPage: React.FC = () => {
             Screening History
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Archived digital stethoscope recordings and AI diagnostic findings ({total} records).
+            Archived digital stethoscope recordings and diagnostic findings ({total} records).
           </p>
         </div>
 
@@ -196,7 +196,7 @@ export const HistoryPage: React.FC = () => {
                 <tr>
                   <th className="px-6 py-4">Recording & Date</th>
                   <th className="px-6 py-4">Category & Site</th>
-                  <th className="px-6 py-4">AI Diagnosis</th>
+                  <th className="px-6 py-4">Diagnosis</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Report Actions</th>
                 </tr>
@@ -237,7 +237,7 @@ export const HistoryPage: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* AI Diagnosis */}
+                    {/* Diagnosis */}
                     <td className="px-6 py-4">
                       <div className="font-extrabold text-blue-950">{item.prediction}</div>
                       {item.confidence && (

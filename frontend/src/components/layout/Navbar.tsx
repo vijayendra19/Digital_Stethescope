@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
             </div>
             <div>
               <span className="font-bold text-lg text-blue-950 tracking-tight">Smart Stethoscope</span>
-              <span className="text-xs font-semibold px-2 py-0.5 ml-2 rounded-full bg-blue-50 text-blue-700 border border-blue-200">AI PWA</span>
+              <span className="text-xs font-semibold px-2 py-0.5 ml-2 rounded-full bg-blue-50 text-blue-700 border border-blue-200">Clinical</span>
             </div>
           </Link>
 

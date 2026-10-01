@@ -302,7 +302,7 @@ def get_clinical_explanation(category: str, prediction: str, classification: str
             )
 
     return (
-        f"AI screening identified {prediction} ({classification}) with {confidence*100:.1f}% confidence. "
+        f"Clinical screening identified {prediction} ({classification}) with {confidence*100:.1f}% confidence. "
         "Grad-CAM visual saliency emphasizes the focal acoustic regions that contributed most strongly to this classification."
     )
 
@@ -382,7 +382,7 @@ def generate_clinical_report_pdf(
     # 1. Header Banner
     header_data = [
         [
-            Paragraph("<b>SMART STETHOSCOPE AI</b><br/><font size=9 color='#64748b'>Cardiopulmonary Digital Auscultation & AI Screening Report</font>", title_style),
+            Paragraph("<b>SMART STETHOSCOPE</b><br/><font size=9 color='#64748b'>Cardiopulmonary Digital Auscultation & Clinical Screening Report</font>", title_style),
             Paragraph(f"<b>Report ID:</b> {str(report.id)[:8]}<br/><b>Date:</b> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}<br/><b>Clinician:</b> {clinician_name}", subtitle_style),
         ]
     ]
@@ -428,7 +428,7 @@ def generate_clinical_report_pdf(
     story.append(meta_table)
     story.append(Spacer(1, 10))
 
-    # 3. AI Screening Diagnostic Summary Box
+    # 3. Clinical Screening Diagnostic Summary Box
     prediction_val = getattr(analysis, "predicted_class", "Normal")
     confidence_val = float(getattr(analysis, "confidence_score", 0.95))
     is_normal = "normal" in prediction_val.lower()
@@ -438,7 +438,7 @@ def generate_clinical_report_pdf(
         [
             Paragraph(f"<b>{status_label}</b>", badge_style),
             Paragraph(
-                f"<b>Primary AI Diagnosis:</b> {prediction_val}<br/>"
+                f"<b>Primary Diagnosis:</b> {prediction_val}<br/>"
                 f"<b>Confidence Rating:</b> {confidence_val*100:.1f}% &nbsp;&nbsp;|&nbsp;&nbsp; "
                 f"<b>Model Version:</b> {getattr(analysis, 'model_version', 'v1.0.0')} &nbsp;&nbsp;|&nbsp;&nbsp; "
                 f"<b>Inference Latency:</b> {getattr(analysis, 'inference_time_ms', 45.0):.1f} ms",
@@ -460,7 +460,7 @@ def generate_clinical_report_pdf(
     story.append(Spacer(1, 10))
 
     # 4. Mel-Spectrogram & Grad-CAM Visual Explainability
-    story.append(Paragraph("AI Explainability & Acoustic Spectrogram Analysis", heading_style))
+    story.append(Paragraph("Explainability & Acoustic Spectrogram Analysis", heading_style))
     story.append(Paragraph(
         "The images below illustrate the frequency-domain Mel-Spectrogram (left) and the corresponding Grad-CAM Saliency Map (right). "
         "Warmer colors (red/orange) pinpoint the exact time-frequency acoustic regions that governed the neural network's diagnostic decision.",
@@ -550,7 +550,7 @@ def generate_clinical_report_pdf(
 
     # 7. Disclaimer & Sign-off Footer
     footer_text = (
-        "<b>CLINICAL DISCLAIMER:</b> This AI-generated screening report is intended solely as an assistive clinical decision support tool. "
+        "<b>CLINICAL DISCLAIMER:</b> This automated clinical screening report is intended solely as an assistive clinical decision support tool. "
         "It does not replace comprehensive medical evaluation, physical examination, or definitive diagnostic imaging by a licensed healthcare professional."
     )
     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#cbd5e1"), spaceBefore=6, spaceAfter=6))

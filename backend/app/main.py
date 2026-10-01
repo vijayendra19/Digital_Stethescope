@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version="1.0.0",
-    description="Smart Stethoscope AI - REST API for AI-assisted Heart & Lung Sound Screening",
+    description="Smart Stethoscope - REST API for Digital Heart & Lung Sound Screening",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url=f"{settings.API_V1_STR}/docs",
     redoc_url=f"{settings.API_V1_STR}/redoc",

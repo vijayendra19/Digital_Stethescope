@@ -52,7 +52,7 @@ export const DashboardPage: React.FC = () => {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-bold mb-4">
               <Sparkles className="w-3.5 h-3.5 text-blue-300" />
-              <span>Smart Stethoscope AI Screening v1.0</span>
+              <span>Smart Stethoscope Clinical Screening v1.0</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
               Welcome, {user?.full_name || 'Clinician'}

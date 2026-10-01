@@ -163,7 +163,7 @@ export const AnalysisDetailPage: React.FC = () => {
 
         {/* Confidence Gauge */}
         <div className="w-full md:w-auto bg-white border border-slate-200/90 rounded-2xl p-4 flex md:flex-col items-center justify-between md:justify-center gap-2 shrink-0 min-w-[180px] shadow-sm">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">AI Confidence</span>
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Confidence Score</span>
           <div className={`text-3xl font-black ${isNormal ? 'text-emerald-600' : 'text-rose-600'}`}>
             {(data.confidence * 100).toFixed(1)}%
           </div>
@@ -200,7 +200,7 @@ export const AnalysisDetailPage: React.FC = () => {
               Mel-Spectrogram & Grad-CAM Visual Saliency
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Heatmap highlights the exact acoustic frequencies (20–2000 Hz) that triggered the AI diagnosis.
+              Heatmap highlights the exact acoustic frequencies (20–2000 Hz) that triggered the diagnosis.
             </p>
           </div>
 
