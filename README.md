@@ -1,12 +1,12 @@
-# Smart Stethoscope AI 🩺⚡
+# Digital Stethoscope 🩺⚡
 
-> **Full-Stack Progressive Web App (PWA) for AI-Assisted Heart and Lung Sound Screening with Grad-CAM Visual Saliency Explainability.**
+> **Full-Stack Application for Automated Heart and Lung Sound Screening with Grad-CAM Visual Saliency Explainability.**
 
 ---
 
 ## 🌟 Overview & Architecture
 
-**Smart Stethoscope AI** enables clinicians, researchers, and patients to upload or capture digital stethoscope audio (`.wav`), perform automated acoustic preprocessing, execute deep convolutional neural network (CNN) screening, inspect **Grad-CAM visual saliency heatmaps** overlaid on Mel-spectrograms, and generate downloadable **Clinical PDF Reports**.
+**Digital Stethoscope** enables clinicians, researchers, and patients to upload or capture digital stethoscope audio (`.wav`), perform automated acoustic preprocessing, execute deep convolutional neural network (CNN) screening, inspect **Grad-CAM visual saliency heatmaps** overlaid on Mel-spectrograms, and generate downloadable **Clinical PDF Reports**.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
