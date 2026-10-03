@@ -154,6 +154,11 @@ async def analyze_audio_recording(
         db.commit()
         db.refresh(recording)
     else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Either 'recording_id' or 'file' must be provided for acoustic analysis.",
+        )
+
     if not os.path.exists(audio_path):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
