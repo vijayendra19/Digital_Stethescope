@@ -25,12 +25,16 @@ export const clearTokens = (): void => {
   localStorage.removeItem('steth_user');
 };
 
-// Request Interceptor: Attach Bearer Token
+// Request Interceptor: Attach Bearer Token & auto-handle FormData
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getAccessToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // For FormData uploads, let the browser / axios auto-set multipart boundary
+    if (config.data instanceof FormData && config.headers) {
+      delete config.headers['Content-Type'];
     }
     return config;
   },

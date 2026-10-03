@@ -15,4 +15,10 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: "https://lungsdetection.vercel.app,http://localhost:5173,http://localhost:3000"
+        value: "https://digitalstethescope.vercel.app,https://lungsdetection.vercel.app,http://localhost:5173,http://localhost:3000"
+      - key: TF_ENABLE_ONEDNN_OPTS
+        value: "0"
+      - key: TF_CPP_MIN_LOG_LEVEL
+        value: "3"
+      - key: CUDA_VISIBLE_DEVICES
+        value: "-1"

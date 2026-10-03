@@ -10,19 +10,23 @@ logger = logging.getLogger("uvicorn")
 Base = declarative_base()
 
 # Attempt to connect to configured DATABASE_URL (PostgreSQL)
-# Fallback to local SQLite if PostgreSQL server is not currently running.
+# Fallback to local SQLite if PostgreSQL server is not currently reachable.
 db_url = settings.DATABASE_URL
 engine = None
 
 try:
-    if db_url.startswith("postgresql"):
-        temp_engine = create_engine(db_url, pool_pre_ping=True)
+    if db_url.startswith("postgresql") or db_url.startswith("postgres"):
+        temp_engine = create_engine(
+            db_url,
+            pool_pre_ping=True,
+            connect_args={"connect_timeout": 3},
+        )
         with temp_engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         engine = temp_engine
         print(f"Connected to primary database: {db_url.split('@')[-1]}")
 except Exception as e:
-    print(f"Notice: Primary PostgreSQL ({db_url}) not reachable. Falling back to local SQLite database.")
+    print(f"Notice: Primary PostgreSQL not reachable ({e}). Falling back to local SQLite database.")
     db_url = "sqlite:///./smart_stethoscope.db"
 
 if engine is None:

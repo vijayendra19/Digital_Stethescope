@@ -3,20 +3,12 @@ import { AudioAnalysisResult, RecordingMetadata } from '../types/audio';
 
 export const audioService = {
   async uploadAudio(formData: FormData): Promise<RecordingMetadata> {
-    const response = await apiClient.post<RecordingMetadata>('/audio/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.post<RecordingMetadata>('/audio/upload', formData);
     return response.data;
   },
 
   async analyzeAudio(formData: FormData): Promise<AudioAnalysisResult> {
-    const response = await apiClient.post<AudioAnalysisResult>('/audio/analyze', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await apiClient.post<AudioAnalysisResult>('/audio/analyze', formData);
     return response.data;
   },
 

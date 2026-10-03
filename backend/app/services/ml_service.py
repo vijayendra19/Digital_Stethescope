@@ -1,8 +1,18 @@
 import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 import time
 from typing import Dict, Any, List, Optional
 import numpy as np
 import tensorflow as tf
+
+try:
+    tf.config.threading.set_inter_op_parallelism_threads(1)
+    tf.config.threading.set_intra_op_parallelism_threads(2)
+except Exception:
+    pass
 
 from app.services.audio_processing import preprocess_audio_pipeline
 from app.services.gradcam import compute_gradcam, generate_gradcam_overlay

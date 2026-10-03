@@ -14,7 +14,6 @@ from app.models.analysis import Analysis
 from app.schemas.recording import RecordingResponse
 from app.schemas.audio import AudioAnalysisResponse
 from app.core.dependencies import get_current_active_user
-from app.services.ml_service import run_screening_inference
 
 router = APIRouter(prefix="/audio", tags=["Audio Management & AI Screening"])
 
@@ -155,58 +154,70 @@ async def analyze_audio_recording(
         db.commit()
         db.refresh(recording)
     else:
+    if not os.path.exists(audio_path):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Either 'recording_id' or 'file' must be provided for AI analysis.",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Audio recording file could not be located on disk ({os.path.basename(audio_path)}).",
         )
-    
-    # Run full AI inference pipeline
-    inference_result = run_screening_inference(
-        audio_path=audio_path,
-        category=category,
-    )
-    
-    # Generate clinical explanation & disease progression details
-    from app.services.report_service import get_clinical_explanation, get_disease_progression_details
-    explanation = get_clinical_explanation(
-        category=inference_result["category"],
-        prediction=inference_result["prediction"],
-        classification=inference_result["classification"],
-        confidence=inference_result["confidence"],
-    )
-    progression = get_disease_progression_details(
-        category=inference_result["category"],
-        prediction=inference_result["prediction"],
-        classification=inference_result["classification"],
-    )
+
+    try:
+        from app.services.ml_service import run_screening_inference
+        from app.services.report_service import get_clinical_explanation, get_disease_progression_details
+
+        inference_result = run_screening_inference(
+            audio_path=audio_path,
+            category=category,
+        )
+        
+        explanation = get_clinical_explanation(
+            category=inference_result["category"],
+            prediction=inference_result["prediction"],
+            classification=inference_result["classification"],
+            confidence=inference_result["confidence"],
+        )
+        progression = get_disease_progression_details(
+            category=inference_result["category"],
+            prediction=inference_result["prediction"],
+            classification=inference_result["classification"],
+        )
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Acoustic screening processing error: {str(exc)}",
+        )
 
     # Save or update in `analyses` table
-    existing_analysis = db.query(Analysis).filter(Analysis.recording_id == recording.id).first()
-    
-    if existing_analysis:
-        existing_analysis.predicted_class = inference_result["prediction"]
-        existing_analysis.confidence_score = inference_result["confidence"]
-        existing_analysis.class_probabilities = inference_result["class_probabilities"]
-        existing_analysis.inference_time_ms = inference_result["inference_time_ms"]
-        db.commit()
-        db.refresh(existing_analysis)
-    else:
-        new_analysis = Analysis(
-            id=str(uuid.uuid4()),
-            recording_id=recording.id,
-            predicted_class=inference_result["prediction"],
-            confidence_score=inference_result["confidence"],
-            class_probabilities=inference_result["class_probabilities"],
-            mel_spectrogram_path=f"base64_spectrogram_{recording.id}",
-            gradcam_heatmap_path=f"base64_gradcam_{recording.id}",
-            anomaly_regions=[],
-            inference_time_ms=inference_result["inference_time_ms"],
-            model_version="v1.0.0",
-        )
-        db.add(new_analysis)
-        db.commit()
-        db.refresh(new_analysis)
-    
+    try:
+        existing_analysis = db.query(Analysis).filter(Analysis.recording_id == recording.id).first()
+        
+        if existing_analysis:
+            existing_analysis.predicted_class = inference_result["prediction"]
+            existing_analysis.confidence_score = inference_result["confidence"]
+            existing_analysis.class_probabilities = inference_result["class_probabilities"]
+            existing_analysis.inference_time_ms = inference_result["inference_time_ms"]
+            db.commit()
+            db.refresh(existing_analysis)
+        else:
+            new_analysis = Analysis(
+                id=str(uuid.uuid4()),
+                recording_id=recording.id,
+                predicted_class=inference_result["prediction"],
+                confidence_score=inference_result["confidence"],
+                class_probabilities=inference_result["class_probabilities"],
+                mel_spectrogram_path=f"base64_spectrogram_{recording.id}",
+                gradcam_heatmap_path=f"base64_gradcam_{recording.id}",
+                anomaly_regions=[],
+                inference_time_ms=inference_result["inference_time_ms"],
+                model_version="v1.0.0",
+            )
+            db.add(new_analysis)
+            db.commit()
+            db.refresh(new_analysis)
+    except Exception as db_exc:
+        print(f"Notice: Failed saving analysis result to database: {db_exc}")
+
     return AudioAnalysisResponse(
         recording_id=recording.id,
         quality=inference_result["quality"],
