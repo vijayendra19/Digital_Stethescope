@@ -5,20 +5,14 @@ services:
     region: oregon
     plan: free
     rootDir: backend
-    buildCommand: pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: ENVIRONMENT
         value: production
       - key: JWT_SECRET
-        value: steth-ai-super-secret-key-change-in-production-123456789
+        generateValue: true
       - key: CORS_ORIGINS
         value: "https://digitalstethescope.vercel.app,https://lungsdetection.vercel.app,http://localhost:5173,http://localhost:3000"
-      - key: TF_ENABLE_ONEDNN_OPTS
-        value: "0"
-      - key: TF_CPP_MIN_LOG_LEVEL
-        value: "3"
-      - key: CUDA_VISIBLE_DEVICES
-        value: "-1"
