@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://smart-stethoscope-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/static/:path*",
+      "destination": "https://smart-stethoscope-backend.onrender.com/static/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
