@@ -13,27 +13,27 @@ def compute_gradcam(
     input_tensor: np.ndarray,
     last_conv_layer_name: str = "conv2d_last",
     class_index: int = None,
+    grad_model: tf.keras.Model = None,
 ) -> np.ndarray:
     """
     Calculates Grad-CAM saliency heatmap for the given input tensor and target class.
     input_tensor shape: (1, height, width, channels)
     """
-    try:
-        grad_model = tf.keras.models.Model(
-            inputs=model.inputs,
-            outputs=[model.get_layer(last_conv_layer_name).output, model.output],
-        )
-    except Exception:
-        # If specific layer not found, find last Conv2D layer in model
-        conv_layers = [l for l in model.layers if "conv" in l.name.lower()]
-        if not conv_layers:
-            # Fallback uniform heatmap if no conv layers
-            return np.ones((input_tensor.shape[1], input_tensor.shape[2]), dtype=np.float32) * 0.5
-        last_conv = conv_layers[-1]
-        grad_model = tf.keras.models.Model(
-            inputs=model.inputs,
-            outputs=[last_conv.output, model.output],
-        )
+    if grad_model is None:
+        try:
+            grad_model = tf.keras.models.Model(
+                inputs=model.inputs,
+                outputs=[model.get_layer(last_conv_layer_name).output, model.output],
+            )
+        except Exception:
+            conv_layers = [l for l in model.layers if "conv" in l.name.lower()]
+            if not conv_layers:
+                return np.ones((input_tensor.shape[1], input_tensor.shape[2]), dtype=np.float32) * 0.5
+            last_conv = conv_layers[-1]
+            grad_model = tf.keras.models.Model(
+                inputs=model.inputs,
+                outputs=[last_conv.output, model.output],
+            )
 
     with tf.GradientTape() as tape:
         conv_outputs, predictions = grad_model(input_tensor)

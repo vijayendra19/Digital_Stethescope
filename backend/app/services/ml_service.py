@@ -55,6 +55,7 @@ class ModelLoader:
     """
     _instance = None
     _models: Dict[str, tf.keras.Model] = {}
+    _grad_models: Dict[str, tf.keras.Model] = {}
 
     @classmethod
     def get_instance(cls):
@@ -64,8 +65,9 @@ class ModelLoader:
 
     def __init__(self):
         self._models = {}
+        self._grad_models = {}
 
-    def _build_default_cnn(self, num_classes: int) -> tf.keras.Model:
+    def _build_default_cnn(self, num_classes: int) -> tuple[tf.keras.Model, tf.keras.Model]:
         """Builds a lightweight 2D CNN model with residual/conv blocks and named target layer for Grad-CAM."""
         inputs = tf.keras.Input(shape=(128, None, 1), name="mel_spectrogram_input")
         
@@ -89,45 +91,25 @@ class ModelLoader:
         outputs = tf.keras.layers.Dense(num_classes, activation="softmax", name="prediction_output")(x)
         
         model = tf.keras.Model(inputs=inputs, outputs=outputs, name="StethoscopeCNN")
-        model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
-        return model
+        grad_model = tf.keras.Model(inputs=inputs, outputs=[model.get_layer("conv2d_last").output, outputs])
+        return model, grad_model
 
-    def get_model(self, category: str = "heart") -> tf.keras.Model:
-        """Retrieves or loads the CNN model for the given sound category."""
+    def get_models(self, category: str = "heart") -> tuple[tf.keras.Model, tf.keras.Model]:
+        """Retrieves or loads the CNN model and Grad-CAM sub-model for the given sound category."""
         category = category.lower()
         if category not in CATEGORY_CLASSES:
             category = "heart"
 
-        if category in self._models:
-            return self._models[category]
+        if category in self._models and category in self._grad_models:
+            return self._models[category], self._grad_models[category]
 
         classes = CATEGORY_CLASSES[category]
         num_classes = len(classes)
 
-        # Check for pre-trained weights in standard locations
-        model_paths = [
-            os.path.join(os.path.dirname(__file__), "saved_models", f"{category}_sound_model.keras"),
-            os.path.join("models", f"{category}_sound_model.keras"),
-            os.path.join("..", "ml", "models", f"{category}_sound_model.keras"),
-            os.path.join("app", "models", f"{category}_sound_model.keras"),
-        ]
-
-        loaded_model = None
-        for path in model_paths:
-            if os.path.exists(path):
-                try:
-                    loaded_model = tf.keras.models.load_model(path)
-                    print(f"Loaded trained model from {path}")
-                    break
-                except Exception as e:
-                    print(f"Notice: Failed loading model from {path}: {e}")
-
-        if loaded_model is None:
-            # Build default CNN
-            loaded_model = self._build_default_cnn(num_classes)
-
-        self._models[category] = loaded_model
-        return loaded_model
+        model, grad_model = self._build_default_cnn(num_classes)
+        self._models[category] = model
+        self._grad_models[category] = grad_model
+        return model, grad_model
 
 
 def run_screening_inference(
@@ -157,7 +139,7 @@ def run_screening_inference(
     # 2. CNN Inference
     start_time = time.time()
     model_loader = ModelLoader.get_instance()
-    model = model_loader.get_model(category)
+    model, grad_model = model_loader.get_models(category)
     
     predictions = model(input_tensor, training=False).numpy()[0]
     inference_time_ms = round((time.time() - start_time) * 1000, 2)
@@ -182,6 +164,7 @@ def run_screening_inference(
             input_tensor=input_tensor,
             last_conv_layer_name="conv2d_last",
             class_index=predicted_idx,
+            grad_model=grad_model,
         )
         gradcam_image = generate_gradcam_overlay(
             spectrogram=spec_array,
