@@ -161,22 +161,14 @@ export const NewAnalysisPage: React.FC = () => {
     }
 
     try {
-      // Step 1: POST /api/audio/upload
-      setLoadingStep('Uploading audio recording to clinical archive...');
-      const uploadFormData = new FormData();
-      uploadFormData.append('file', audioToSubmit);
-      uploadFormData.append('sound_category', category);
-      uploadFormData.append('chest_location', location);
-      if (patientGender) uploadFormData.append('patient_gender', patientGender);
-      if (patientAge) uploadFormData.append('patient_age', patientAge);
-      if (clinicalNotes) uploadFormData.append('clinical_notes', clinicalNotes);
-
-      const recordingMeta = await audioService.uploadAudio(uploadFormData);
-
-      // Step 2: POST /api/audio/analyze
-      setLoadingStep('Running Mel-Spectrogram transformation & Grad-CAM neural inference...');
+      setLoadingStep('Running Mel-Spectrogram transformation & Grad-CAM neural screening...');
       const analyzeFormData = new FormData();
-      analyzeFormData.append('recording_id', recordingMeta.id);
+      analyzeFormData.append('file', audioToSubmit);
+      analyzeFormData.append('sound_category', category);
+      analyzeFormData.append('chest_location', location);
+      if (patientGender) analyzeFormData.append('patient_gender', patientGender);
+      if (patientAge) analyzeFormData.append('patient_age', patientAge);
+      if (clinicalNotes) analyzeFormData.append('clinical_notes', clinicalNotes);
 
       const analysisResult = await audioService.analyzeAudio(analyzeFormData);
 
@@ -189,7 +181,11 @@ export const NewAnalysisPage: React.FC = () => {
         },
       });
     } catch (err: any) {
-      const msg = err.response?.data?.detail || 'Screening failed. Please check your audio file.';
+      console.error('Screening error:', err);
+      const detail = err.response?.data?.detail;
+      const msg = detail 
+        ? (typeof detail === 'string' ? detail : JSON.stringify(detail))
+        : (err.message || 'Screening failed. Please check your audio file.');
       setError(msg);
       setLoadingStep(null);
     }
